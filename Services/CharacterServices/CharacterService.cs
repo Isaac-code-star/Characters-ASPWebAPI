@@ -29,24 +29,14 @@ namespace ASPWebAPI.Services.CharacterServices
 
         public async Task<ServiceResponse<List<GetCharacterResponseDto>>> AddCharacter(AddCharaterRequestDto newCharacter)
         {
-            var serviceResponse = new ServiceResponse<List<GetCharacterResponseDto>>();
+            var serviceResponse = new ServiceResponse<List<GetCharacterResponseDto>>();   
+            var charater = _mapper.Map<Character>(newCharacter);
+            //charater.Id = _dataContext.Characters.Max(c => c.Id) + 1;
+            _dataContext.Characters.Add(charater);
+            await _dataContext.SaveChangesAsync();
 
-            try
-            {
-                var charater = _mapper.Map<Character>(newCharacter);
-                //charater.Id = _dataContext.Characters.Max(c => c.Id) + 1;
-                _dataContext.Characters.Add(charater);
-                await _dataContext.SaveChangesAsync();
-                
+            serviceResponse.Data = _dataContext.Characters.Select(c => _mapper.Map<GetCharacterResponseDto>(c)).ToList();
 
-                serviceResponse.Data = _dataContext.Characters.Select(c => _mapper.Map<GetCharacterResponseDto>(c)).ToList();
-                
-            }
-            catch(Exception ex)
-            {
-                serviceResponse.Message = ex.Message;
-            }
-           
             return serviceResponse;
         }
 
@@ -58,7 +48,7 @@ namespace ASPWebAPI.Services.CharacterServices
 
             try
             {
-                var character = dbCharacter.Select(c => _mapper.Map<GetCharacterResponseDto>(c)).ToList();
+                var character = dbCharacter.Select(character => _mapper.Map<GetCharacterResponseDto>(character)).ToList();
 
                 if (character is null)
                     throw new Exception($"No characters available");
@@ -86,7 +76,7 @@ namespace ASPWebAPI.Services.CharacterServices
 
                 serviceResponse.Data = _mapper.Map<GetCharacterResponseDto>(dbCharater);
                 serviceResponse.Success = true;
-                serviceResponse.Message = "Successfull";
+                serviceResponse.Message = $"ID {id} found";
             }
             catch (Exception ex)
             {
@@ -119,7 +109,7 @@ namespace ASPWebAPI.Services.CharacterServices
 
                 serviceResponse.Data = _mapper.Map<GetCharacterResponseDto>(dbCharacter);
                 serviceResponse.Success = true;
-                serviceResponse.Message = "Characters updated successfully";
+                serviceResponse.Message = $"Characters with {updateCharacter.Id} updated successfully";
             }
             catch (Exception ex) {
                 serviceResponse.Success = false;
@@ -145,7 +135,7 @@ namespace ASPWebAPI.Services.CharacterServices
 
                 serviceResponse.Data = _dataContext.Characters.Select(c => _mapper.Map<GetCharacterResponseDto>(c)).ToList();
                 serviceResponse.Success = true;
-                serviceResponse.Message = "Character removed successfully";
+                serviceResponse.Message = $"Character with {id} removed successfully";
             }
             catch (Exception ex)
             {
