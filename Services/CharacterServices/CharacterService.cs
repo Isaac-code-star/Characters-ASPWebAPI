@@ -16,17 +16,19 @@ namespace ASPWebAPI.Services.CharacterServices
 
         };
 
-
+        //Dependency injection for Automapper
         private readonly IMapper _mapper;
-        //sqlconnection 
+        //Dependency injection for database sqlServer
         private readonly DataContext _dataContext;
 
+        //contrustor of injections
         public CharacterService(IMapper mapper, DataContext dataContext)
         {
             _mapper = mapper;
             _dataContext = dataContext;
         }
 
+        //Add charaters method
         public async Task<ServiceResponse<List<GetCharacterResponseDto>>> AddCharacter(AddCharaterRequestDto newCharacter)
         {
             var serviceResponse = new ServiceResponse<List<GetCharacterResponseDto>>();   
@@ -109,7 +111,7 @@ namespace ASPWebAPI.Services.CharacterServices
 
                 serviceResponse.Data = _mapper.Map<GetCharacterResponseDto>(dbCharacter);
                 serviceResponse.Success = true;
-                serviceResponse.Message = $"Characters with {updateCharacter.Id} updated successfully";
+                serviceResponse.Message = $"Characters with Id {updateCharacter.Id} updated successfully";
             }
             catch (Exception ex) {
                 serviceResponse.Success = false;

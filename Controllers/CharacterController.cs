@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using ASPWebAPI.Dtos.Character;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ASPWebAPI.Controllers
 {
@@ -16,11 +17,12 @@ namespace ASPWebAPI.Controllers
             _characterService = characterService;
         }
 
-        [HttpGet("GetAllCharacter")]
+        [HttpGet("GetAllCharacter"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<ServiceResponse<List<GetCharacterResponseDto>>>> GetAllCharacter()
         {
            return Ok(await _characterService.GetAllCharacter());
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ServiceResponse<GetCharacterResponseDto>>> GetSingle(int id)
