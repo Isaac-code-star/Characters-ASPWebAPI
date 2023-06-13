@@ -1,6 +1,7 @@
 global using ASPWebAPI.Models;
 global using ASPWebAPI.Services.CharacterServices;
 using ASPWebAPI.Data;
+using ASPWebAPI.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,12 +31,16 @@ builder.Services.AddSwaggerGen(/*options => {
     });
 
     options.OperationFilter<SecurityRequirementsOperationFilter>();
-}*/);
+}*/); //if you aren't using swagger for testing. basically for reading json web token
 
 // Adding AutoMappers
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //Injecting Character services
 builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+// httpcontextaccessor
+builder.Services.AddHttpContextAccessor();
 
 //database connection
 //builder.Services.AddDbContextPool<DataContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));

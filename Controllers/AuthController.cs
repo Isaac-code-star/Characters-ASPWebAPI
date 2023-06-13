@@ -1,4 +1,6 @@
 ﻿using ASPWebAPI.Dtos.User;
+using ASPWebAPI.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -16,10 +18,24 @@ namespace ASPWebAPI.Controllers
         public static User user = new User();
 
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, IUserService userService)
         {
+            _userService = userService;
             _configuration = configuration;
+        }
+
+        [HttpGet, Authorize]
+        public ActionResult<object> GetMe()
+        {
+            var username = _userService.GetMyName();
+            return Ok(username);
+            
+            // var username = User?.Identity?.Name;
+            // var username2 = User?.FindFirstValue(ClaimTypes.Name);
+            // var role = User?.FindFirstValue(ClaimTypes.Role);
+            // return Ok(new {username, username2, role});
         }
 
         [HttpPost("register")]
